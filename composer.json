@@ -1,5 +1,5 @@
 {
-    "name": "eugene-khorev/yii2-json-rpc-2.0",
+    "name": "eugene-khorev/yii2-json-rpc-controller",
     "description": "Yii2 JSON RPC 2.0 extension",
     "type": "yii2-extension",
     "keywords": ["yii2","extension", "json", "rpc"],
