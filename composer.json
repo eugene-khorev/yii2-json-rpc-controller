@@ -1,0 +1,21 @@
+{
+    "name": "eugene-khorev/yii2-json-rpc-2.0",
+    "description": "Yii2 JSON RPC 2.0 extension",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension", "json", "rpc"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Eugene Khorev",
+            "email": "eugene.khorev@gmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "jsonrpc\\": ""
+        }
+    }
+}
