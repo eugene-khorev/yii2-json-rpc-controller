@@ -137,5 +137,5 @@ You can also use batch JSON-RPC 2.0 requests:
 ]
 ```
 
-In this case two controller methods `rpcSomeMethod` and `rpcAnotherMethod` will be called sequentially.
+In this case two controller methods `rpcSomeMethod()` and `rpcAnotherMethod()` will be called sequentially.
 And the client will recieve the correct batch results event if there are errors occurred in one of the methods.
