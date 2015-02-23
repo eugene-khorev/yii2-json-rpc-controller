@@ -3,7 +3,7 @@ Basic usage
 
 1) Change your request component class in configuration to `\jsonrpc\Request`:
 
-```
+```php
    'components' => [
 		...
         'request' => [
@@ -16,7 +16,7 @@ Basic usage
 
 2) Create a new controller that extends `\jsonrpc\Controller`:
 
-```
+```php
 class SomeController extends \jsonrpc\Controller
 {
 	/**
@@ -39,7 +39,7 @@ class SomeController extends \jsonrpc\Controller
 
 Now if you post this JSON-RPC 2.0 request to `/some/rpc`:
 
-```
+```json
 {
 	"jsonrpc": "2.0", 
 	"method": "echo", 
@@ -52,7 +52,7 @@ Now if you post this JSON-RPC 2.0 request to `/some/rpc`:
 
 You get the following result
 
-```
+```json
 {
 	"jsonrpc": "2.0",
 	"id": 1,
@@ -72,7 +72,7 @@ Advanced usage
 
 Create a new model:
 
-```
+```php
 class SomeModel extends yii\base\Model
 {
 	public $value1;
@@ -82,7 +82,7 @@ class SomeModel extends yii\base\Model
 
 Make changes to you RPC controller action so it looks like this:
 
-```
+```php
 	public function rpcEcho($param1, SomeModel $modelParam)
 	{
 		return ['recievedData' => [
@@ -94,7 +94,7 @@ Make changes to you RPC controller action so it looks like this:
 
 Now if you post this JSON-RPC request to `/some/rpc`:
 
-```
+```json
 {
 	"jsonrpc": "2.0",
 	"id": 1,
@@ -108,4 +108,5 @@ Now if you post this JSON-RPC request to `/some/rpc`:
 }
 ```
 
-You get valid `$modelParam` model in your method. The library uses `rpc` or `default` scenario to validate parameter models. If validation fails a client recieves correct JSON-RPC 2.0 answer containing validation error, but your RPC action method doesn't even run.
+You get valid `$modelParam` model in your method. The library uses `rpc` or `default` scenario to validate parameter models. 
+If validation fails a client recieves correct JSON-RPC 2.0 answer containing validation error, but your RPC action method doesn't even run.
