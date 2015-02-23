@@ -70,6 +70,9 @@ And if you navigate your browser to `/some/index` you get regular `\Yii2\web\Con
 Advanced usage
 ==============
 
+Parameters, models and validation
+---------------------------------
+
 Create a new model:
 
 ```php
@@ -110,6 +113,9 @@ Now if you post this JSON-RPC 2.0 request to `/some/rpc`:
 
 You get valid `$modelParam` model in your method. The library uses `rpc` or `default` scenario to validate parameter models. 
 If validation fails a client recieves correct JSON-RPC 2.0 answer containing validation error, but your RPC action method doesn't even run.
+
+Batch requests
+--------------
 
 You can also use batch JSON-RPC 2.0 requests:
 
