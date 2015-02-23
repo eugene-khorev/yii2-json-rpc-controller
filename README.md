@@ -45,8 +45,9 @@ Now if you post this JSON-RPC 2.0 request to `/some/rpc`:
 	"method": "echo", 
 	"params": { 
 		"param1": "abc",
-		"param2", "123"
-	}
+		"param2": "123"
+	},
+	"id": 1
 }
 ```
 
@@ -100,14 +101,14 @@ Now if you post this JSON-RPC 2.0 request to `/some/rpc`:
 ```json
 {
 	"jsonrpc": "2.0",
-	"id": 1,
 	"params": {
 		"param1": "abc",
 		"modelParam": {
 			"value1": "123",
 			"value2": "321",
 		}
-	}
+	},
+	"id": 1
 }
 ```
 
@@ -121,8 +122,18 @@ You can also use batch JSON-RPC 2.0 requests:
 
 ```json
 [
-	{"jsonrpc": "2.0", "method": "some-method", "params": { "somethinf": "anything"}, "id": 1},
-	{"jsonrpc": "2.0", "method": "another-method", "params": { "data": [1, 2, 3, 4] }, "id": 2}
+	{
+		"jsonrpc": "2.0", 
+		"method": "some-method", 
+		"params": { "something": "anything"}, 
+		"id": 1
+	},
+	{
+		"jsonrpc": "2.0", 
+		"method": "another-method", 
+		"params": { "data": [1, 2, 3, 4] }, 
+		"id": 2
+	}
 ]
 ```
 
