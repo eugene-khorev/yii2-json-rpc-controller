@@ -1,7 +1,7 @@
 Basic usage
 ===========
 
-1) Change your request component class in configuration to `\jsonrpc\Request`:
+Change your request component class in configuration to `\jsonrpc\Request`:
 
 ```php
    'components' => [
@@ -14,7 +14,7 @@ Basic usage
 	]
 ```
 
-2) Create a new controller that extends `\jsonrpc\Controller`:
+Create a new controller that extends `\jsonrpc\Controller`:
 
 ```php
 class SomeController extends \jsonrpc\Controller
@@ -28,7 +28,7 @@ class SomeController extends \jsonrpc\Controller
 	}
 
 	/**
-	 * This JSON-RPC 2.0 controller action
+	 * This is JSON-RPC 2.0 controller action
 	 */
 	public function rpcEcho($param1, $param2)
 	{
@@ -92,7 +92,7 @@ Make changes to you RPC controller action so it looks like this:
 	}
 ```
 
-Now if you post this JSON-RPC request to `/some/rpc`:
+Now if you post this JSON-RPC 2.0 request to `/some/rpc`:
 
 ```json
 {
@@ -110,3 +110,15 @@ Now if you post this JSON-RPC request to `/some/rpc`:
 
 You get valid `$modelParam` model in your method. The library uses `rpc` or `default` scenario to validate parameter models. 
 If validation fails a client recieves correct JSON-RPC 2.0 answer containing validation error, but your RPC action method doesn't even run.
+
+You can also use batch JSON-RPC 2.0 requests:
+
+```json
+[
+	{"jsonrpc": "2.0", "method": "some-method", "params": { "somethinf": "anything"}, "id": 1},
+	{"jsonrpc": "2.0", "method": "another-method", "params": { "data": [1, 2, 3, 4] }, "id": 2}
+]
+```
+
+In this case two controller methods `rpcSomeMethod` and `rpcAnotherMethod` will be called sequentially.
+And the client will recieve the correct batch results event if there are errors occurred in one of the methods.
