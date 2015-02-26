@@ -123,7 +123,7 @@ class Action extends \yii\base\Action
 		
 		if (!$requestModel->validate())
 		{
-			throw new \yii\web\BadRequestHttpException('Invalid JSON-RPC request parameters.');
+			throw new \yii\web\BadRequestHttpException('Invalid JSON-RPC request parameters: ' . json_encode($requestModel->getErrors()));
 		}
 		
 		return $requestModel;
@@ -222,7 +222,7 @@ class Action extends \yii\base\Action
 
 		if (!$paramModel->validate())
 		{
-			throw new \yii\web\BadRequestHttpException('Invalid JSON-RPC request parameters.');
+			throw new \yii\web\BadRequestHttpException('Invalid JSON-RPC request parameters: ' . json_encode($paramModel->getErrors()));
 		}
 		
 		return $paramModel;
