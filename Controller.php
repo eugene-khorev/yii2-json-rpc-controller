@@ -17,29 +17,29 @@ class Controller extends \yii\web\Controller
 {
 
 	/**
-     * @inheritdoc
-     */
-    public $enableCsrfValidation = false;
-	
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'contentNegotiator' => [
-                'class' => ContentNegotiator::className(),
-                'formats' => [
-                    'application/json' => Response::FORMAT_JSON,
-                    'text/html' => Response::FORMAT_HTML,
-                ],
-            ],
-        ];
-    }
+	 * @inheritdoc
+	 */
+	public $enableCsrfValidation = false;
 
-    /**
-     * @inheritdoc
-     */
+	/**
+	 * @inheritdoc
+	 */
+	public function behaviors()
+	{
+		return [
+			'contentNegotiator' => [
+				'class'		 => ContentNegotiator::className(),
+				'formats'	 => [
+					'application/json'	 => Response::FORMAT_JSON,
+					'text/html'			 => Response::FORMAT_HTML,
+				],
+			],
+		];
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public function actions()
 	{
 		return [
@@ -50,22 +50,21 @@ class Controller extends \yii\web\Controller
 		];
 	}
 
-    /**
-     * @inheritdoc
-     */
+	/**
+	 * @inheritdoc
+	 */
 	public function beforeAction($action)
 	{
-		\Yii::beginProfile('jsonrpc.controller.'.$action->id);
+		\Yii::beginProfile('jsonrpc.controller.' . $action->id);
 		return parent::beforeAction($action);
 	}
 
-    /**
-     * @inheritdoc
-     */
+	/**
+	 * @inheritdoc
+	 */
 	public function afterAction($action, $result)
 	{
-		\Yii::endProfile('jsonrpc.controller.'.$action->id);
+		\Yii::endProfile('jsonrpc.controller.' . $action->id);
 		return parent::afterAction($action, $result);
 	}
-	
 }

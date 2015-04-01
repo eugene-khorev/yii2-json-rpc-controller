@@ -25,21 +25,17 @@ class Action extends \yii\base\Action
 	public function run()
 	{
 		$responseArray = [];
-		
-		try
-		{
+
+		try {
 			\Yii::trace('Running JSON-RPC 2.0 request', 'jsonrpc\Action::run');
-			
+
 			$requestArray = $this->getRequestArray();
-			foreach ($requestArray as $requestData)
-			{
+			foreach ($requestArray as $requestData) {
 				$responseArray[] = $this->processRequest($requestData);
 			}
-		}
-		catch (\Exception $ex)
-		{
-			$responseArray[] = ['jsonrpc' => '2.0',
-				'error' => [
+		} catch (\Exception $ex) {
+			$responseArray[] = ['jsonrpc'	 => '2.0',
+				'error'		 => [
 					'code'		 => $ex->getCode(),
 					'message'	 => $ex->getMessage(),
 					'data'		 => YII_DEBUG ? $ex->getTraceAsString() : null,
@@ -58,19 +54,17 @@ class Action extends \yii\base\Action
 	protected function getRequestArray()
 	{
 		$requestArray = Yii::$app->request->getBodyParams();
-		if (!is_array($requestArray))
-		{
+		if (!is_array($requestArray)) {
 			throw new \yii\web\BadRequestHttpException('Invalid JSON-RPC request.');
 		}
 
-		if (!ArrayHelper::isIndexed($requestArray))
-		{
+		if (!ArrayHelper::isIndexed($requestArray)) {
 			$requestArray = array($requestArray);
 		}
-		
+
 		return $requestArray;
 	}
-	
+
 	/**
 	 * Validates JSON-RPC request, initializes controller action parameters and runs the action
 	 * @param array $requestData
@@ -80,24 +74,22 @@ class Action extends \yii\base\Action
 	{
 		$responseData = ['jsonrpc' => '2.0'];
 
-		try
-		{
-			\Yii::trace('Running JSON-RPC 2.0 method: '. ArrayHelper::getValue($requestData, 'method', '-'), 'jsonrpc\Action::processRequest');
-			
-			\Yii::beginProfile('jsonrpc.controller.rpc.'.  ArrayHelper::getValue($requestData, 'method', '-'));
-			
-			$requestModel = $this->getRequestModel($requestData);
-			$responseData['id'] = $requestModel->id;
+		try {
+			$method = ArrayHelper::getValue($requestData, 'method', '-');
+			\Yii::trace('Running JSON-RPC 2.0 method: ' . $method, 'jsonrpc\Action::processRequest');
 
-			$reflectionMethod = $this->getControllerMethod($requestModel->method);
-			$methodParams = $this->getMethodParams($reflectionMethod, $requestModel->params);
+			\Yii::beginProfile('jsonrpc.controller.rpc.' . $method);
+
+			$requestModel		 = $this->getRequestModel($requestData);
+			$responseData['id']	 = $requestModel->id;
+
+			$reflectionMethod	 = $this->getControllerMethod($requestModel->method);
+			$methodParams		 = $this->getMethodParams($reflectionMethod, $requestModel->params);
 
 			$responseData['result'] = $this->runControllerAction($reflectionMethod->getName(), $methodParams);
-			
-			\Yii::endProfile('jsonrpc.controller.rpc.'.  ArrayHelper::getValue($requestData, 'method', '-'));
-		}
-		catch (\Exception $ex) 
-		{
+
+			\Yii::endProfile('jsonrpc.controller.rpc.' . ArrayHelper::getValue($requestData, 'method', '-'));
+		} catch (\Exception $ex) {
 			unset($responseData['result']);
 
 			$responseData['error'] = [
@@ -106,10 +98,10 @@ class Action extends \yii\base\Action
 				'data'		 => YII_DEBUG ? $ex->getTraceAsString() : null,
 			];
 		}
-		
+
 		return $responseData;
 	}
-	
+
 	/**
 	 * Creates and validates JSON-RPC request model
 	 * @param array $requestData
@@ -118,17 +110,17 @@ class Action extends \yii\base\Action
 	 */
 	protected function getRequestModel($requestData)
 	{
-		$requestModel = new RequestModel();
-		$requestModel->attributes = $requestData;
-		
-		if (!$requestModel->validate())
-		{
-			throw new \yii\web\BadRequestHttpException('Invalid JSON-RPC request parameters: ' . json_encode($requestModel->getErrors()));
+		$requestModel				 = new RequestModel();
+		$requestModel->attributes	 = $requestData;
+
+		if (!$requestModel->validate()) {
+			$errors = json_encode($requestModel->getErrors());
+			throw new \yii\web\BadRequestHttpException('Invalid JSON-RPC request parameters: ' . $errors);
 		}
-		
+
 		return $requestModel;
 	}
-	
+
 	/**
 	 * Returns controller action method for specified JSON-RPC request method
 	 * @param string $requestedMethod
@@ -138,20 +130,18 @@ class Action extends \yii\base\Action
 	protected function getControllerMethod($requestedMethod)
 	{
 		$methodName = 'rpc' . str_replace(' ', '', ucwords(implode(' ', explode('-', $requestedMethod))));
-		if (!method_exists($this->controller, $methodName))
-		{
+		if (!method_exists($this->controller, $methodName)) {
 			throw new \yii\web\NotFoundHttpException("Not found JSON-RPC method {$requestedMethod}.");
 		}
 
 		$method = new \ReflectionMethod($this->controller, $methodName);
-		if (!$method->isPublic() || $method->getName() !== $methodName)
-		{
+		if (!$method->isPublic() || $method->getName() !== $methodName) {
 			throw new \yii\web\NotFoundHttpException("Not found JSON-RPC method {$requestedMethod}.");
 		}
-		
+
 		return $method;
 	}
-	
+
 	/**
 	 * Creates and initializes array of controller action method arguments
 	 * @param \ReflectionMethod $reflectionMethod
@@ -161,26 +151,24 @@ class Action extends \yii\base\Action
 	 */
 	protected function getMethodParams(\ReflectionMethod $reflectionMethod, $requestParams)
 	{
-		$actionParams = [];
-		$methodParams = $reflectionMethod->getParameters();
-		
-		foreach ($methodParams as $param)
-		{
+		$actionParams	 = [];
+		$methodParams	 = $reflectionMethod->getParameters();
+
+		foreach ($methodParams as $param) {
 			$paramName = $param->getName();
-			if (!array_key_exists($paramName, $requestParams))
-			{
+			if (!array_key_exists($paramName, $requestParams)) {
 				throw new \yii\web\BadRequestHttpException("Not found JSON-RPC request parameter '{$paramName}'.");
 			}
 
-			$paramClass = $param->getClass();
-			$actionParams[$paramName] = !empty($paramClass) 
+			$paramClass					 = $param->getClass();
+			$actionParams[$paramName]	 = !empty($paramClass)
 					? $this->getParameterModel($paramName, $paramClass->name, $requestParams)
 					: $requestParams[$paramName];
 		}
-		
+
 		return $actionParams;
 	}
-	
+
 	/**
 	 * Executes controller action method
 	 * @param string $methodName
@@ -191,7 +179,7 @@ class Action extends \yii\base\Action
 	{
 		return call_user_func_array([$this->controller, $methodName], $methodParams);
 	}
-	
+
 	/**
 	 * Creates and validates model for controller action argument
 	 * @param string $paramName
@@ -205,27 +193,22 @@ class Action extends \yii\base\Action
 	{
 		$paramModel = new $modelClassName;
 
-		if (!$paramModel instanceof \yii\base\Model)
-		{
+		if (!$paramModel instanceof \yii\base\Model) {
 			throw new \yii\base\InvalidParamException("Parameter '{$paramName}' must be instance of \yii\base\Model");
 		}
 
-		if (in_array($this->scenario, $paramModel->scenarios()))
-		{
+		if (in_array($this->scenario, $paramModel->scenarios())) {
 			$paramModel->scenario = $this->scenario;
 			$paramModel->setAttributes($requestParams[$paramName], true);
-		}
-		else
-		{
+		} else {
 			$paramModel->setAttributes($requestParams[$paramName], false);
 		}
 
-		if (!$paramModel->validate())
-		{
-			throw new \yii\web\BadRequestHttpException('Invalid JSON-RPC request parameters: ' . json_encode($paramModel->getErrors()));
+		if (!$paramModel->validate()) {
+			$errors = json_encode($paramModel->getErrors());
+			throw new \yii\web\BadRequestHttpException('Invalid JSON-RPC request parameters: ' . $errors);
 		}
-		
+
 		return $paramModel;
 	}
-	
 }

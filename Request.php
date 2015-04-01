@@ -19,5 +19,4 @@ class Request extends \yii\web\Request
 	public $parsers = [
 		'application/json' => 'yii\web\JsonParser',
 	];
-
 }
