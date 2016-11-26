@@ -18,14 +18,15 @@ class HttpBearerAuth extends \yii\filters\auth\HttpBearerAuth
      */
     public function handleFailure($response)
     {
-        $ex = new \yii\web\UnauthorizedHttpException('Your request was made with invalid credentials.');
+        $ex = new \yii\web\UnauthorizedHttpException('Your request was made with invalid credentials.', 403);
         
         $response->data = [
             'jsonrpc' => '2.0',
-            'error' => '',
-            'code' => $ex->getCode(),
-            'message' => $ex->getMessage(),
-            'data' => YII_DEBUG ? $ex->getTraceAsString() : null,
+            'error' => [
+                'code' => $ex->getCode(),
+                'message' => $ex->getMessage(),
+                'data' => YII_DEBUG ? $ex->getTraceAsString() : null,
+            ]
         ];
     }
 
