@@ -8,6 +8,7 @@
 namespace jsonrpc;
 
 use yii\web\Response;
+use yii\filters\Cors;
 use yii\filters\ContentNegotiator;
 
 /**
@@ -20,6 +21,9 @@ class Controller extends \yii\web\Controller
 	 * @inheritdoc
 	 */
 	public $enableCsrfValidation = false;
+        public $accessControlRequestOrigin = ['*'];
+        public $accessControlRequestHeaders = ['*'];
+        public $accessControlRequestMethod = ['GET', 'POST'];
 
 	/**
 	 * @inheritdoc
@@ -27,6 +31,14 @@ class Controller extends \yii\web\Controller
 	public function behaviors()
 	{
 		return [
+                        [
+                            'class' => Cors::className(),
+                            'cors' => [
+                                'Origin' => $this->accessControlRequestOrigin,
+                                'Access-Control-Request-Headers' => $this->accessControlRequestHeaders,
+                                'Access-Control-Request-Method' => $this->accessControlRequestMethod,
+                            ],
+                        ],
 			'contentNegotiator' => [
 				'class'		 => ContentNegotiator::className(),
 				'formats'	 => [
